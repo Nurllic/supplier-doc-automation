@@ -2,12 +2,12 @@
 
 ## 项目概述
 
-自动化生成供应商质量保证协议。输入原辅料明细 + 质量标准文件 → 输出 Word 质量保证协议。
+自动化生成供应商质量保证协议。输入明细表 + 质量标准文件 → 输出 Word 质量保证协议。
 
 **项目路径**: `.`
 **核心脚本**: `agreement-automation\batch_generate_v3.py`（多物料）、`agreement-automation\generate_qa_agreement_v3.py`（单物料）
 **模板**: `agreement-automation\质量保证协议模板.docx`
-**数据**: `data\{供应商名}\materials\新增原辅料明细_vN.docx` + `data\{供应商名}\materials\质量标准_vN\`
+**数据**: `data\{供应商名}\materials\新增明细表_vN.docx` + `data\{供应商名}\materials\质量标准_vN\`
 **联系人表**: `agreement-automation\平台联系人的对应关系.xlsx`
 **输出**: `data\{供应商名}\agreements\`
 **增量记录**: `data\{供应商名}\history.json`
@@ -20,7 +20,7 @@
 
 1. **读取状态** → 检查 `state/` 目录下的 checkpoint.json 确定当前阶段
 2. **检查 AI-Agent 邮箱** → 查找主题含【企业质量协议签订】的新邮件
-3. **下载附件** → 新增原辅料明细.docx + 质量标准.zip/.rar
+3. **下载附件** → 新增明细表.docx + 质量标准.zip/.rar
 4. **解析输入** → 确定 incoming_data 中的文件路径、供应商名、平台、OA流水号
 5. **执行阶段** → 调用对应 tool/script
 6. **验证输出** → 检查生成文件完整性
@@ -41,7 +41,7 @@
 | `WAIT_CONFIRM` | 等待人工在钉钉AI表格确认供应商名称 | — |
 | `READ_FROM_DINGTALK` | 读取钉钉AI表格 → 获取供应商名称/平台 | 供应商信息 |
 | `CHECK_HISTORY` | 检查 data/{供应商}/history.json 是否存在 | 增量/全新标记 |
-| `PARSE_INPUT` | 读取新增原辅料明细.docx，解析物料列表 | materials.json |
+| `PARSE_INPUT` | 读取新增明细表.docx，解析物料列表 | materials.json |
 | `PARSE_STANDARDS` | 逐一解析各物料的企业质量标准文件 | standards.json |
 | `MERGE_MATERIALS` | 增量模式：合并历史物料+新增物料，去重 | 完整物料列表 |
 | `GENERATE` | 调用 batch_generate_v3.py 生成协议 | *.docx |
@@ -60,12 +60,12 @@
 
 | 工具 | 用途 | 命令 |
 |------|------|------|
-| `parse_raw_material` | 解析原辅料明细 docx → 物料列表 | `python -c "from generate_qa_agreement_v3 import parse_raw_material; materials = parse_raw_material(path)"` |
+| `parse_raw_material` | 解析明细表 docx → 物料列表 | `python -c "from generate_qa_agreement_v3 import parse_raw_material; materials = parse_raw_material(path)"` |
 | `parse_quality_standard` | 解析单一质量标准 docx → 指标列表 | `python -c "from generate_qa_agreement_v3 import parse_quality_standard; inds = parse_quality_standard(path)"` |
 | `batch_generate` | 批处理生成质量协议 | `python batch_generate_v3.py` |
 | `get_supplier_from_dingtalk` | 从钉钉AI表格读取供应商名称/平台 | 待对接钉钉API |
 | `get_platform_contact` | 查询平台审核人信息 | `python -c "from generate_qa_agreement_v3 import get_platform_contact; ..."` |
-| `extract_spec` | 从规格/浓度字段提取纯规格 | 内置于 generate_qa_agreement_v3.py |
+| `extract_spec` | 从规格/参数字段提取纯规格 | 内置于 generate_qa_agreement_v3.py |
 | `replace_placeholder` | 替换 Word 模板占位符 | 内置于脚本 |
 
 ### 文件系统操作
@@ -87,7 +87,7 @@
   "phase": "GENERATE",
   "timestamp": "2026-07-25T10:30:00",
   "input": {
-    "raw_material_file": "email-database/QA/新增原辅料明细.docx",
+    "raw_material_file": "email-database/QA/新增明细表.docx",
     "supplier_name": "供应商A公司",
     "platform": "平台D",
     "oa_serial": "QA-20260707-001"
@@ -110,7 +110,7 @@
 
 ### 物料-质量标准映射: `state/material_std_map.json`（运行时自动创建）
 
-维护物料编码与质量标准文件的映射关系。当新增物料时需更新此文件。
+维护条目编码与质量标准文件的映射关系。当新增物料时需更新此文件。
 
 ---
 
@@ -179,7 +179,7 @@ python batch_generate_v3.py
 from batch_generate_v3 import batch_generate
 
 result = batch_generate(
-    raw_material_docx="email-database/QA/新增原辅料明细.docx",
+    raw_material_docx="email-database/QA/新增明细表.docx",
     supplier_name="供应商A公司",
     platform_name="平台D",
     oa_serial="QA-20260707-001",
@@ -192,9 +192,9 @@ result = batch_generate(
 - `python-docx`, `pandas`, `openpyxl`, `lxml`
 - Hermes Agent（用于 skill 调用）
 
-### 物料编码 → 货号映射（自动从 货号/克隆号或CAS号 列提取）
+### 条目编码 → 供应商货号映射（自动从 供应商货号/标识号 列提取）
 
-货号列（质量标准表中的第一列）取自原辅料明细表的"货号/克隆号或CAS号"字段中的"货号：XXX"部分，而非"物料编码"列。
+供应商货号列（质量标准表中的第一列）取自明细表的"供应商货号/标识号"字段中的"供应商货号：XXX"部分，而非"条目编码"列。
 
 ---
 
@@ -202,9 +202,9 @@ result = batch_generate(
 
 | 文件 | 说明 |
 |------|------|
-| `data/{供应商}/materials/新增原辅料明细_vN.docx` | 原辅料明细（按版本） |
+| `data/{供应商}/materials/新增明细表_vN.docx` | 明细表（按版本） |
 | `email-database/QA/*原料企业质量标准.docx` 等 | 各物料质量标准（共 16 份原料企业标准 + 16 份企业标准-{申请人}，无 0 字节） |
-| `data/_party_c_std_map.json` | 示例丙公司物料编码→质量标准映射 |
+| `data/_party_c_std_map.json` | 示例丙公司条目编码→质量标准映射 |
 | `data/_supplier_mapping.json` | 供应商名称归一化映射 |
 | `agreement-automation/质量保证协议模板.docx` | Word 模板 |
 | `agreement-automation/平台联系人的对应关系.xlsx` | 平台→审核人/电话/邮箱映射 |
