@@ -1,0 +1,12 @@
+{
+  "qa_dir": ".\\email-database\\QA",
+  "state_file": ".\\email-database\\.monitor_state.json",
+  "app_key": "your_dingtalk_app_key",
+  "app_secret": "your_dingtalk_app_secret",
+  "operator_id": "your_dingtalk_operator_unionid",
+  "base_id": "your_dingtalk_base_id",
+  "sheet2_id": "your_dingtalk_sheet2_id",
+  "webhook": "https://oapi.dingtalk.com/robot/send?access_token=your_webhook_token",
+  "robot_secret": "",
+  "base_record_url": "https://alidocs.dingtalk.com/i/nodes/<base_id>?sheet=<sheet2_id>&record="
+}

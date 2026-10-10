@@ -1,0 +1,71 @@
+version: "3.8"
+
+services:
+  # ========== QA 邮件监控（需要 agently-cli 支持） ==========
+  qa-monitor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: qa-auto-monitor
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Shanghai
+      - PYTHONUNBUFFERED=1
+    volumes:
+      # Config & state persistence
+      - ./scripts/qa_config.json:/app/scripts/qa_config.json:ro
+      # QA file storage
+      - ./email-database:/app/email-database
+      # 统一数据目录（协议/归档/邮件任务）
+      - ./data:/app/data
+      # agently 登录态（挂整个 /root，覆盖其文件型 keychain 存储，重建容器不丢）
+      - agently-auth:/root
+    command: ["monitor"]
+    networks:
+      - qa-net
+
+  # ========== QA 确认监控 + 协议生成 ==========
+  qa-confirmer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: qa-auto-confirmer
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Shanghai
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./scripts/qa_config.json:/app/scripts/qa_config.json:ro
+      - ./email-database:/app/email-database
+      - ./data:/app/data
+      # 模板文件（只读）
+      - ./agreement-automation/质量保证协议模板.docx:/app/agreement-automation/质量保证协议模板.docx:ro
+    command: ["confirmer"]
+    networks:
+      - qa-net
+
+  # ========== QA 邮件发送（每5分钟） ==========
+  qa-sender:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: qa-auto-sender
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Shanghai
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./scripts/qa_config.json:/app/scripts/qa_config.json:ro
+      - ./data:/app/data
+      - ./email-database:/app/email-database
+      - agently-auth:/root
+    command: ["sender"]
+    networks:
+      - qa-net
+
+networks:
+  qa-net:
+    driver: bridge
+
+volumes:
+  agently-auth:

@@ -1,0 +1,5 @@
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir --default-timeout=120 -i https://mirrors.aliyun.com/pypi/simple/ -r requirements.txt
+COPY Dockerfile /app/

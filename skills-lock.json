@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "dingtalk-ai-table": {
+      "source": "breath57/dingtalk-skills",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/dingtalk-ai-table/SKILL.md",
+      "computedHash": "375b91332f628a23ac17264893821905f1a9b2ccd3a4566c2a951d185d86b749"
+    }
+  }
+}

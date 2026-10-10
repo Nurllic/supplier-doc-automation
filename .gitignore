@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+
+# 运行时状态与业务数据（不入库）
+state/
+scripts/qa_config.json
+email-database/.monitor_state.json
+email-database/.confirm_state.json
+email-database/dedup_log.txt
+email-database/QA/
+email-database/output/
+email-database/email_tasks/
+data/*
+!data/.gitkeep
+
+# 生成输出
+agreement-automation/output/
+agreement-automation/*.backup-*.docx
+
+# 内部业务文件（不入库，本地保留）
+agreement-automation/平台联系人的对应关系.xlsx
+agreement-automation/质量保证协议模板.docx
+email-database/_stale*/
+
+# 本地环境变量（如需要）
+.env
