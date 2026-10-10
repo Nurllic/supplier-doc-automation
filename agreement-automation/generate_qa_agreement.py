@@ -59,8 +59,8 @@ import pandas as pd
 # ============================================================
 BASE_DIR = r".\agreement-automation"
 
-TEST_RAW_MATERIAL = os.path.join(BASE_DIR, "新增原辅料明细表-平台G-5101001238-edta2NA-张三-test.docx")
-TEST_QUALITY_STD  = os.path.join(BASE_DIR, "企业质量标准-平台G-5101001238-edta2NA-张三-test.docx")
+TEST_RAW_MATERIAL = os.path.join(BASE_DIR, "新增原辅料明细表-平台G-9000000017-edta2NA-张三-test.docx")
+TEST_QUALITY_STD  = os.path.join(BASE_DIR, "企业质量标准-平台G-9000000017-edta2NA-张三-test.docx")
 CONTACT_XLSX      = os.path.join(BASE_DIR, "平台联系人的对应关系.xlsx")
 TEMPLATE_DOCX     = os.path.join(BASE_DIR, "质量保证协议模板.docx")
 OUTPUT_DIR        = os.path.join(BASE_DIR, "output")

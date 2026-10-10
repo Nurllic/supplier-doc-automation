@@ -1187,7 +1187,7 @@ def generate_qa_agreement(
     platform_name="",
     oa_serial="QA-DOC-2026-XXXX",
     output_path=None,
-    material_filter=None,  # 按物料编码过滤，如 ["8800012345"]
+    material_filter=None,  # 按物料编码过滤，如 ["9000000001"]
     incremental=False,  # True=追加新增物料，False=重新生成
     party_a_contact=None,  # 钉钉AI表格人工确认的甲方联系人（优先于平台默认）
     party_a_company=None,  # 钉钉AI表格人工确认的甲方公司（优先于平台默认）
